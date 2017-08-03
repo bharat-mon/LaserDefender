@@ -7,6 +7,8 @@ public class EnemySpawner : MonoBehaviour {
 	public float width = 5f;
 	public float height = 10f;
 	public float moveSpeed = 3f;
+	public float spawnDelay = 0.5f;
+	
 	private bool movingRight = true;
 	private float xMin;
 	private float xMax;
@@ -37,11 +39,22 @@ public class EnemySpawner : MonoBehaviour {
 		xMax = rightBoundary.x;
 	}
 	
+//	void SpawnEnemy () {
+//		foreach (Transform child in transform) {
+//			GameObject enemy = Instantiate(enemyPrefab, child.transform.position, Quaternion.identity) as GameObject;
+//			enemy.transform.parent = child;
+//		}
+//	}
+	
 	void SpawnEnemy () {
-		foreach (Transform child in transform) {
-			GameObject enemy = Instantiate(enemyPrefab, child.transform.position, Quaternion.identity) as GameObject;
-			enemy.transform.parent = child;
+		Transform freePosition = NextFreePosition();
+		if (freePosition) {
+			GameObject enemy = Instantiate(enemyPrefab, freePosition.position, Quaternion.identity) as GameObject;
+			enemy.transform.parent = freePosition;
 		}
+		if (NextFreePosition()) {
+			Invoke("SpawnEnemy", spawnDelay);
+		}		
 	}
 	
 	void EnemyDirection () {
@@ -57,6 +70,15 @@ public class EnemySpawner : MonoBehaviour {
 		} else if (rightEdge > xMax) {
 			movingRight = false;
 		}
+	}
+	
+	Transform NextFreePosition () {
+		foreach(Transform child in transform) {
+			if (child.childCount <= 0) {
+				return child;
+			}
+		}
+		return null;
 	}
 	
 	bool AllEnemiesDead () {
