@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour {
 	public GameObject Laser;
 	public float projectileSpeed;
 	public float fireRate = 1.0f;
-	public float health = 500;
+	public float health = 500f;
 	
 	public AudioClip fireLaser;
 	public AudioClip hitTaken;
@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour {
 	private Vector3 shipPos;
 	private float xMin;
 	private float xMax;
+	private HealthKeeper healthKeeper;
 	
 	// Use this for initialization
 	void Start () {
@@ -24,6 +25,9 @@ public class PlayerController : MonoBehaviour {
 		Vector3 rightMost = Camera.main.ViewportToWorldPoint(new Vector3(1, 0, distanceZ));
 		xMin = leftMost.x + padding;
 		xMax = rightMost.x - padding;
+		
+		healthKeeper = GameObject.Find ("HealthKeeper").GetComponent<HealthKeeper>();
+		healthKeeper.Health(health);
 	}
 	
 	// Update is called once per frame
@@ -61,10 +65,17 @@ public class PlayerController : MonoBehaviour {
 		if (laser) {
 			laser.Hit();
 			health -= laser.GetDamage();
+			healthKeeper.Health(health);
 			AudioSource.PlayClipAtPoint(hitTaken, this.transform.position);
 			if (health <= 0) {
-				Destroy(gameObject);
-			}
+				Die();
 			}
 		}
+	}
+	
+	void Die () {
+		Destroy(gameObject);
+		LevelManager manager = GameObject.Find("LevelManager").GetComponent<LevelManager>();
+		manager.LoadLevel("End");
+	}
 }
