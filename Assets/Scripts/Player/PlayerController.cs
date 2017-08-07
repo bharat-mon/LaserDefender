@@ -4,14 +4,18 @@ using System.Collections;
 public class PlayerController : MonoBehaviour {
 	
 	public float moveSpeed;
-	private Vector3 shipPos;
-	private float xMin;
-	private float xMax;
 	public float padding;
 	public GameObject Laser;
 	public float projectileSpeed;
 	public float fireRate = 1.0f;
 	public float health = 500;
+	
+	public AudioClip fireLaser;
+	public AudioClip hitTaken;
+	
+	private Vector3 shipPos;
+	private float xMin;
+	private float xMax;
 	
 	// Use this for initialization
 	void Start () {
@@ -49,6 +53,7 @@ public class PlayerController : MonoBehaviour {
 		Vector3 laserSpawn = this.transform.position + new Vector3(0, 0.5f, 0);
 		GameObject laserBeam = Instantiate(Laser, laserSpawn, Quaternion.identity) as GameObject;
 		laserBeam.rigidbody2D.velocity = new Vector3(0, projectileSpeed, 0);
+		AudioSource.PlayClipAtPoint(fireLaser, this.transform.position);
 	}
 	
 	void OnTriggerEnter2D (Collider2D collider) {
@@ -56,6 +61,7 @@ public class PlayerController : MonoBehaviour {
 		if (laser) {
 			laser.Hit();
 			health -= laser.GetDamage();
+			AudioSource.PlayClipAtPoint(hitTaken, this.transform.position);
 			if (health <= 0) {
 				Destroy(gameObject);
 			}
