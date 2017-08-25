@@ -26,8 +26,7 @@ public class PlayerController : MonoBehaviour {
 		xMin = leftMost.x + padding;
 		xMax = rightMost.x - padding;
 		
-		healthKeeper = GameObject.Find ("HealthKeeper").GetComponent<HealthKeeper>();
-		healthKeeper.Health(health);
+		healthKeeper = GameObject.Find("HealthKeeper").GetComponent<HealthKeeper>();
 	}
 	
 	// Update is called once per frame
